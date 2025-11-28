@@ -74,6 +74,17 @@
         .modal-overlay.active {
             display: flex;
         }
+        /* Details toggle */
+        .mastery-details {
+            display: none;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .mastery-details.expanded {
+            display: block;
+            max-height: 1000px; /* arbitrary high value */
+        }
     </style>
     
     <script>
@@ -109,9 +120,20 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
                     </svg>
                 </button>
-                <button id="go-to-add-btn" title="Add New Topic" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700 text-lg">+</button>
+                <button id="go-to-data-btn" title="Manage Data" class="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">
+                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+                    </svg>
+                </button>
             </div>
         </header>
+        
+        <section id="mastery-section" class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4 border-b border-gray-300 dark:border-gray-600 pb-2">Mastery Dashboard</h2>
+            <div id="mastery-list" class="space-y-4">
+                <p id="mastery-empty-state" class="text-gray-500 dark:text-gray-400">Add some topics to see your mastery progress.</p>
+            </div>
+        </section>
 
         <section id="exam-plan-section" class="mb-8">
             <h2 class="text-2xl font-semibold mb-4 border-b border-gray-300 dark:border-gray-600 pb-2">Active Exam Plans</h2>
@@ -133,44 +155,13 @@
                 <p id="upcoming-empty-state" class="text-gray-500 dark:text-gray-400">Nothing scheduled for the next 7 days.</p>
             </div>
         </section>
-
-        <section id="logbook-section" class="mb-8">
-            <h2 class="text-2xl font-semibold mb-4 border-b border-gray-300 dark:border-gray-600 pb-2">Logbook (Completed)</h2>
-            <div id="logbook-list" class="space-y-3">
-                <p id="logbook-empty-state" class="text-gray-500 dark:text-gray-400">No study sessions completed yet.</p>
-            </div>
-        </section>
-
-        <section id="all-topics-section">
-            <h2 class="text-2xl font-semibold mb-4 border-b border-gray-300 dark:border-gray-600 pb-2">All Topics (Manage)</h2>
-            <!-- Import/Export Buttons -->
-            <div class="grid grid-cols-2 gap-4 mb-4">
-                <button id="import-btn" class="w-full flex justify-center items-center gap-2 bg-blue-600 text-white font-semibold py-2 px-4 rounded-md shadow-sm hover:bg-blue-700">
-                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                    </svg>
-                    Import Data
-                </button>
-                <button id="export-btn" class="w-full flex justify-center items-center gap-2 bg-gray-600 text-white font-semibold py-2 px-4 rounded-md shadow-sm hover:bg-gray-700">
-                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                    </svg>
-                    Export All Data
-                </button>
-                <input type="file" id="file-importer" class="hidden" accept=".json">
-            </div>
-            
-            <div id="all-topics-list" class="space-y-3">
-                <p id="all-topics-empty-state" class="text-gray-500 dark:text-gray-400">No topics added yet. Click the '+' to add one.</p>
-            </div>
-        </section>
     </div>
 
-    <!-- === View 2: Add New Topic === -->
+    <!-- === View 2: Add New Topic (from JSON) === -->
     <div id="add-topic-view" class="view max-w-2xl mx-auto">
         <header class="flex justify-between items-center mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-indigo-600 dark:text-indigo-400">Add New Topic</h1>
-            <button id="back-to-main-btn-1" class="bg-gray-200 dark:bg-gray-700 py-2 px-4 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600">Back</button>
+            <h1 class="text-3xl md:text-4xl font-bold text-indigo-600 dark:text-indigo-400">Add Topic (from JSON)</h1>
+            <button id="back-to-data-btn-1" class="bg-gray-200 dark:bg-gray-700 py-2 px-4 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600">Back</button>
         </header>
 
         <form id="add-topic-form" class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
@@ -179,7 +170,7 @@
                     Paste Plan Data from Gemini
                 </label>
                 <textarea id="json-input" rows="12" placeholder='{ "subject": "Physics", "chapter": "4", "subChapter": "8", "topicName": "Density & Pressure", "calendarEvents": [...], "ankiCards": [...], "practiceQuestions": [...] }' class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white focus:ring-indigo-500 focus:border-indigo-500 font-mono text-sm" required></textarea>
-                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Paste the full JSON from me. It now includes subject, chapter, and topic name.</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Use this for bulk-import or pre-made plans from Gemini.</p>
             </div>
             
             <button type="submit" class="mt-4 w-full flex justify-center items-center bg-green-600 text-white font-semibold py-3 px-6 rounded-md shadow-sm hover:bg-green-700">
@@ -192,7 +183,7 @@
     <!-- === View 3: Review Session === -->
     <div id="review-view" class="view max-w-2xl mx-auto">
         <header class="flex justify-between items-center mb-6">
-            <h1 id="review-topic-name" class="text-2xl md:text-3xl font-bold text-indigo-600 dark:text-indigo-400"></h1>
+            <h1 id="review-topic-name" class="text-2xl md:text-4xl font-bold text-indigo-600 dark:text-indigo-400"></h1>
             <button id="back-to-main-btn-2" class="bg-gray-200 dark:bg-gray-700 py-2 px-4 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600">Back</button>
         </header>
 
@@ -266,7 +257,7 @@
                 <p class="text-gray-500 dark:text-gray-400">No topics added yet.</p>
             </div>
             
-            <button id="exam-start-btn" class="w-full flex justify-center items-center bg-indigo-600 text-white font-semibold py-3 px-6 rounded-md shadow-sm hover:bg-indigo-7V00">
+            <button id="exam-start-btn" class="w-full flex justify-center items-center bg-indigo-600 text-white font-semibold py-3 px-6 rounded-md shadow-sm hover:bg-indigo-700">
                 Create Exam Plan
             </button>
             <p id="exam-error-message" class="text-red-500 text-sm mt-2 hidden"></p>
@@ -281,14 +272,208 @@
         </div>
     </div>
     
+    <!-- === View 5: Data Management === -->
+    <div id="data-view" class="view max-w-2xl mx-auto">
+        <header class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-indigo-600 dark:text-indigo-400">Data Management</h1>
+            <button id="back-to-main-btn-4" class="bg-gray-200 dark:bg-gray-700 py-2 px-4 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600">Back</button>
+        </header>
+        
+        <!-- Topic Creation -->
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4 border-b border-gray-300 dark:border-gray-600 pb-2">Create & Sync</h2>
+            <div class="space-y-4 mb-4">
+                <button id="go-to-editor-btn" class="w-full text-left bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                    <h2 class="text-xl font-semibold text-indigo-600 dark:text-indigo-400 mb-1">Create Topic (Manual)</h2>
+                    <p class="text-gray-600 dark:text-gray-300">Manually create a new topic with your own flashcards and questions.</p>
+                </button>
+                <button id="go-to-add-json-btn" class="w-full text-left bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                    <h2 class="text-xl font-semibold text-indigo-600 dark:text-indigo-400 mb-1">Add Topic (from JSON)</h2>
+                    <p class="text-gray-600 dark:text-gray-300">Paste in a pre-made JSON topic from Gemini (good for bulk-adding).</p>
+                </button>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <button id="import-btn" class="w-full flex justify-center items-center gap-2 bg-blue-600 text-white font-semibold py-3 px-4 rounded-md shadow-sm hover:bg-blue-700">
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                    </svg>
+                    Import / Merge
+                </button>
+                <button id="export-btn" class="w-full flex justify-center items-center gap-2 bg-gray-600 text-white font-semibold py-3 px-4 rounded-md shadow-sm hover:bg-gray-700">
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Export All Data
+                </button>
+                <input type="file" id="file-importer" class="hidden" accept=".json">
+            </div>
+            <!-- *** NEW RESET BUTTON HERE *** -->
+            <div class="mt-4">
+                <button id="hard-reset-btn" class="w-full flex justify-center items-center gap-2 bg-red-600 text-white font-semibold py-3 px-4 rounded-md shadow-sm hover:bg-red-700">
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    Hard Reset (Delete All Data)
+                </button>
+            </div>
+        </section>
+        
+        <!-- Past Paper Logger -->
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4 border-b border-gray-300 dark:border-gray-600 pb-2">Past Paper Logger</h2>
+            <button id="go-to-paper-logger-btn" class="w-full text-left bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                <h2 class="text-xl font-semibold text-indigo-600 dark:text-indigo-400 mb-1">Log a Past Paper</h2>
+                <p class="text-gray-600 dark:text-gray-300">Find topics you got wrong on a paper and instantly reschedule them for review.</p>
+            </button>
+        </section>
+
+        <!-- Logbook -->
+        <section id="logbook-section-data" class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4 border-b border-gray-300 dark:border-gray-600 pb-2">Logbook (Completed)</h2>
+            <div id="logbook-list-data" class="space-y-3 max-h-96 overflow-y-auto">
+                <p id="logbook-empty-state-data" class="text-gray-500 dark:text-gray-400">No study sessions completed yet.</p>
+            </div>
+        </section>
+
+        <!-- All Topics -->
+        <section id="all-topics-section-data">
+            <h2 class="text-2xl font-semibold mb-4 border-b border-gray-300 dark:border-gray-600 pb-2">All Topics (Manage)</h2>
+            <div id="all-topics-list-data" class="space-y-3 max-h-96 overflow-y-auto">
+                <p id="all-topics-empty-state-data" class="text-gray-500 dark:text-gray-400">No topics added yet.</p>
+            </div>
+        </section>
+    </div>
+    
+    <!-- === View 6: Manual Topic Editor === -->
+    <div id="editor-view" class="view max-w-2xl mx-auto">
+        <header class="flex justify-between items-center mb-8">
+            <h1 id="editor-title" class="text-3xl md:text-4xl font-bold text-indigo-600 dark:text-indigo-400">Create Topic</h1>
+            <button id="back-to-data-btn-2" class="bg-gray-200 dark:bg-gray-700 py-2 px-4 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600">Back</button>
+        </header>
+
+        <form id="editor-form" class="space-y-6">
+            <!-- Section 1: Metadata -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold mb-4">Topic Details</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="editor-subject" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Subject</label>
+                        <input type="text" id="editor-subject" placeholder="e.g., Physics" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white" list="subject-list" required>
+                        <datalist id="subject-list"></datalist>
+                    </div>
+                    <div>
+                        <label for="editor-topic-name" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Topic Name</label>
+                        <input type="text" id="editor-topic-name" placeholder="e.g., Electric Fields" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white" required>
+                    </div>
+                    <div>
+                        <label for="editor-chapter" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Chapter</LabeL>
+                        <input type="text" id="editor-chapter" placeholder="e.g., 11" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white" required>
+                    </div>
+                    <div>
+                        <label for="editor-subchapter" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Sub-Chapter</label>
+                        <input type="text" id="editor-subchapter" placeholder="e.g., 1" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: First Review (Only for new topics) -->
+            <div id="editor-first-review-section" class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold mb-4">First Review Task</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label for="editor-task-title" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Task Title</label>
+                        <input type="text" id="editor-task-title" placeholder="e.g., Review: Electric Fields" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white" required>
+                    </div>
+                    <div>
+                        <label for="editor-task-desc" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Task Description</label>
+                        <textarea id="editor-task-desc" rows="2" placeholder="e.g., Master flashcards and practice questions." class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Flashcards -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold">Flashcards</h2>
+                    <button type="button" id="editor-add-card" class="bg-blue-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700">Add Card</button>
+                </div>
+                <div id="editor-card-list" class="space-y-4">
+                    <p id="editor-no-cards" class="text-gray-500 dark:text-gray-400">No flashcards added yet.</p>
+                </div>
+            </div>
+
+            <!-- Section 4: Practice Questions -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold">Practice Questions</h2>
+                    <button type="button" id="editor-add-q" class="bg-blue-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700">Add Question</button>
+                </div>
+                <div id="editor-q-list" class="space-y-4">
+                    <p id="editor-no-qs" class="text-gray-500 dark:text-gray-400">No questions added yet.</p>
+                </div>
+            </div>
+            
+            <button id="editor-save-btn" type="submit" class="w-full flex justify-center items-center bg-green-600 text-white font-semibold py-3 px-6 rounded-md shadow-sm hover:bg-green-700">
+                Save New Topic
+            </button>
+            <p id="editor-error-message" class="text-red-500 text-sm mt-2 hidden"></p>
+        </form>
+    </div>
+    
+    <!-- === View 7: Past Paper Logger === -->
+    <div id="log-paper-view" class="view max-w-2xl mx-auto">
+        <header class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-indigo-600 dark:text-indigo-400">Log Past Paper</h1>
+            <button id="back-to-data-btn-3" class="bg-gray-200 dark:bg-gray-700 py-2 px-4 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600">Back</button>
+        </header>
+        
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+            <p class="text-gray-600 dark:text-gray-300 mb-4">Log the paper you completed and check off the topics you found difficult. The app will reschedule them for review tomorrow.</p>
+
+            <div class="mb-4">
+                <label for="log-paper-name" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Paper Name</label>
+                <input type="text" id="log-paper-name" placeholder="e.g., Maths 2023 Paper 1" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="log-paper-subject" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Filter by Subject</label>
+                <select id="log-paper-subject" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white focus:ring-indigo-500 focus:border-indigo-500">
+                    <option value="all" selected disabled>Select a subject...</option>
+                </select>
+            </div>
+
+            <div id="log-paper-topic-list" class="max-h-64 overflow-y-auto space-y-4 mb-4 p-4 border dark:border-gray-600 rounded-md">
+                <p class="text-gray-500 dark:text-gray-400">Please select a subject.</p>
+            </div>
+            
+            <button id="log-paper-btn" class="w-full flex justify-center items-center bg-indigo-600 text-white font-semibold py-3 px-6 rounded-md shadow-sm hover:bg-indigo-700">
+                Log Paper & Reschedule
+            </button>
+            <p id="log-paper-error" class="text-red-500 text-sm mt-2 hidden"></p>
+        </div>
+    </div>
+    
     <!-- Import Confirmation Modal -->
     <div id="import-modal" class="modal-overlay">
         <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-sm w-full">
-            <h2 class="text-xl font-bold mb-4">Confirm Import</h2>
-            <p class="text-gray-600 dark:text-gray-300 mb-6">Are you sure you want to import data? This will <b class="text-red-500">overwrite all current topics</b> and exam plans.</p>
+            <h2 class="text-xl font-bold mb-4">Confirm Import / Merge</h2>
+            <!-- *** UPDATED TEXT HERE *** -->
+            <p class="text-gray-600 dark:text-gray-300 mb-6">This will <b class="text-green-500">add new topics</b> and exam plans from the file. It will <b class="text-yellow-500">not</b> overwrite or duplicate existing topics.</p>
             <div class="flex justify-end space-x-2">
                 <button id="import-cancel-btn" class="bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-100 font-semibold py-2 px-4 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500">Cancel</button>
-                <button id="import-confirm-btn" class="bg-blue-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700">Yes, Import</button>
+                <button id="import-confirm-btn" class="bg-blue-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700">Yes, Import & Merge</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- *** NEW HARD RESET MODAL *** -->
+    <div id="reset-modal" class="modal-overlay">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-sm w-full">
+            <h2 class="text-xl font-bold mb-4 text-red-600">DANGER: Hard Reset</h2>
+            <p class="text-gray-600 dark:text-gray-300 mb-6">Are you absolutely sure? This will <b class="text-red-500">permanently delete all topics, exam plans, and mastery progress.</b> This cannot be undone.</p>
+            <div class="flex justify-end space-x-2">
+                <button id="reset-cancel-btn" class="bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-100 font-semibold py-2 px-4 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500">Cancel</button>
+                <button id="reset-confirm-btn" class="bg-red-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-red-700">Yes, Delete Everything</button>
             </div>
         </div>
     </div>
@@ -307,34 +492,45 @@
                 pile3_known: []     // Knew
             }
         };
+        let currentEditTopicId = null; // For the editor
         
         const repIntervals = [1, 3, 7, 15, 30, 60, 120, 240]; // 8 levels
+        const maxRepLevel = repIntervals.length - 1;
 
         // --- DOM Elements ---
         const views = {
             main: document.getElementById('main-view'),
             add: document.getElementById('add-topic-view'),
             review: document.getElementById('review-view'),
-            exam: document.getElementById('exam-view')
+            exam: document.getElementById('exam-view'),
+            data: document.getElementById('data-view'),
+            editor: document.getElementById('editor-view'),
+            logPaper: document.getElementById('log-paper-view')
         };
-        const goToAddBtn = document.getElementById('go-to-add-btn');
         const goToExamBtn = document.getElementById('go-to-exam-btn');
-        const backToMainBtn1 = document.getElementById('back-to-main-btn-1');
+        const goToDataBtn = document.getElementById('go-to-data-btn');
         const backToMainBtn2 = document.getElementById('back-to-main-btn-2');
         const backToMainBtn3 = document.getElementById('back-to-main-btn-3');
+        const backToMainBtn4 = document.getElementById('back-to-main-btn-4');
+        const backToDataBtn1 = document.getElementById('back-to-data-btn-1');
+        const backToDataBtn2 = document.getElementById('back-to-data-btn-2');
+        const backToDataBtn3 = document.getElementById('back-to-data-btn-3');
+        
         const addTopicForm = document.getElementById('add-topic-form');
         const jsonInput = document.getElementById('json-input');
         const addErrorMessage = document.getElementById('add-error-message');
         const dueTodayList = document.getElementById('due-today-list');
         const upcomingList = document.getElementById('upcoming-list');
-        const logbookList = document.getElementById('logbook-list');
-        const allTopicsList = document.getElementById('all-topics-list');
+        const logbookList = document.getElementById('logbook-list-data'); // Corrected ID
+        const allTopicsList = document.getElementById('all-topics-list-data'); // Corrected ID
         const examPlanList = document.getElementById('exam-plan-list');
+        const masteryList = document.getElementById('mastery-list');
         const dueEmptyState = document.getElementById('due-empty-state');
         const upcomingEmptyState = document.getElementById('upcoming-empty-state');
-        const logbookEmptyState = document.getElementById('logbook-empty-state');
-        const allTopicsEmptyState = document.getElementById('all-topics-empty-state');
+        const logbookEmptyState = document.getElementById('logbook-empty-state-data'); // Corrected ID
+        const allTopicsEmptyState = document.getElementById('all-topics-empty-state-data'); // Corrected ID
         const examPlanEmptyState = document.getElementById('exam-plan-empty-state');
+        const masteryEmptyState = document.getElementById('mastery-empty-state');
         
         // Review View
         const reviewTopicName = document.getElementById('review-topic-name');
@@ -373,23 +569,65 @@
         const importModal = document.getElementById('import-modal');
         const importCancelBtn = document.getElementById('import-cancel-btn');
         const importConfirmBtn = document.getElementById('import-confirm-btn');
+        // *** NEW RESET BUTTONS ***
+        const hardResetBtn = document.getElementById('hard-reset-btn');
+        const resetModal = document.getElementById('reset-modal');
+        const resetCancelBtn = document.getElementById('reset-cancel-btn');
+        const resetConfirmBtn = document.getElementById('reset-confirm-btn');
+        
+        // Data View
+        const goToEditorBtn = document.getElementById('go-to-editor-btn');
+        const goToAddJsonBtn = document.getElementById('go-to-add-json-btn');
+        const goToPaperLoggerBtn = document.getElementById('go-to-paper-logger-btn');
+        
+        // Editor View
+        const editorViewTitle = document.getElementById('editor-title');
+        const editorForm = document.getElementById('editor-form');
+        const editorFirstReview = document.getElementById('editor-first-review-section');
+        const editorAddCard = document.getElementById('editor-add-card');
+        const editorAddQ = document.getElementById('editor-add-q');
+        const editorCardList = document.getElementById('editor-card-list');
+        const editorQList = document.getElementById('editor-q-list');
+        const editorNoCards = document.getElementById('editor-no-cards');
+        const editorNoQs = document.getElementById('editor-no-qs');
+        const subjectDataList = document.getElementById('subject-list');
+        const editorErrorMessage = document.getElementById('editor-error-message');
+        const editorSaveBtn = document.getElementById('editor-save-btn');
+        
+        // Log Paper View
+        const logPaperName = document.getElementById('log-paper-name');
+        const logPaperSubject = document.getElementById('log-paper-subject');
+        const logPaperTopicList = document.getElementById('log-paper-topic-list');
+        const logPaperBtn = document.getElementById('log-paper-btn');
+        const logPaperError = document.getElementById('log-paper-error');
 
         // --- Navigation ---
         function showView(viewName) {
             Object.values(views).forEach(v => v.classList.remove('active'));
             views[viewName].classList.add('active');
-            if (viewName === 'exam') {
-                renderExamView();
-            }
+            if (viewName === 'exam') renderExamView();
+            if (viewName === 'editor') renderEditorView();
+            if (viewName === 'data') renderDataView();
+            if (viewName === 'logPaper') renderLogPaperView();
         }
-        goToAddBtn.addEventListener('click', () => showView('add'));
-        goToExamBtn.addEventListener('click', () => showView('exam'));
         
-        [backToMainBtn1, backToMainBtn2, backToMainBtn3].forEach(btn => {
+        goToDataBtn.addEventListener('click', () => showView('data'));
+        goToExamBtn.addEventListener('click', () => showView('exam'));
+        goToEditorBtn.addEventListener('click', () => {
+            currentEditTopicId = null; // Ensure it's a new topic
+            showView('editor');
+        });
+        goToAddJsonBtn.addEventListener('click', () => showView('add'));
+        goToPaperLoggerBtn.addEventListener('click', () => showView('logPaper'));
+        
+        [backToMainBtn2, backToMainBtn3, backToMainBtn4].forEach(btn => {
             btn.addEventListener('click', () => {
                 renderMainView();
                 showView('main');
             });
+        });
+        [backToDataBtn1, backToDataBtn2, backToDataBtn3].forEach(btn => {
+            btn.addEventListener('click', () => showView('data'));
         });
 
         // --- localStorage Logic ---
@@ -452,7 +690,7 @@
             updateThemeIcons(localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches));
             
             renderMainView();
-            addTopicForm.addEventListener('submit', handleAddTopic);
+            addTopicForm.addEventListener('submit', handleAddTopicJSON);
             
             btnKnowNo.addEventListener('click', () => handleFlashcardAnswer(1));
             btnKnowSortOf.addEventListener('click', () => handleFlashcardAnswer(2));
@@ -474,9 +712,23 @@
             importCancelBtn.addEventListener('click', () => importModal.classList.remove('active'));
             importConfirmBtn.addEventListener('click', () => {
                 importModal.classList.remove('active');
-                fileImporter.click(); // Trigger hidden file input
+                fileImporter.click();
             });
             fileImporter.addEventListener('change', handleImport);
+
+            // *** NEW RESET LISTENERS ***
+            hardResetBtn.addEventListener('click', () => resetModal.classList.add('active'));
+            resetCancelBtn.addEventListener('click', () => resetModal.classList.remove('active'));
+            resetConfirmBtn.addEventListener('click', handleHardReset);
+            
+            // Editor Listeners
+            editorForm.addEventListener('submit', handleSaveManualTopic);
+            editorAddCard.addEventListener('click', () => addCardField());
+            editorAddQ.addEventListener('click', () => addQuestionField());
+            
+            // Log Paper Listeners
+            logPaperSubject.addEventListener('change', () => renderLogPaperTopicList(logPaperSubject.value));
+            logPaperBtn.addEventListener('click', handleLogPaper);
         }
 
         function renderMainView() {
@@ -485,17 +737,55 @@
             
             dueTodayList.innerHTML = '';
             upcomingList.innerHTML = '';
-            logbookList.innerHTML = '';
-            allTopicsList.innerHTML = '';
             examPlanList.innerHTML = '';
+            masteryList.innerHTML = '';
             
             let dueCount = 0;
             let upcomingEvents = [];
-            let completedEvents = [];
             
+            // --- Mastery Calculation ---
+            const topicsBySubject = allTopics.filter(t => !t.isPastPaperLog)
+                                          .reduce((acc, topic) => {
+                if (!acc[topic.subject]) {
+                    acc[topic.subject] = [];
+                }
+                acc[topic.subject].push(topic);
+                return acc;
+            }, {});
+            
+            const subjects = Object.keys(topicsBySubject).sort();
+            
+            if (subjects.length === 0) {
+                masteryEmptyState.style.display = 'block';
+            } else {
+                masteryEmptyState.style.display = 'none';
+                subjects.forEach(subject => {
+                    const topicsInSubject = topicsBySubject[subject];
+                    let totalMastery = 0;
+                    
+                    const topicMasteryList = topicsInSubject.map(topic => {
+                        const lastEvent = topic.calendarEvents[topic.calendarEvents.length - 1];
+                        let repLevel = 0;
+                        if (lastEvent) {
+                            repLevel = lastEvent.repLevel || 0;
+                        }
+                        const topicMastery = (repLevel / maxRepLevel) * 100;
+                        totalMastery += topicMastery;
+                        return { name: topic.topicName, mastery: topicMastery, chapter: topic.chapter, subChapter: topic.subChapter };
+                    });
+                    
+                    const subjectMastery = totalMastery / topicsInSubject.length;
+                    
+                    topicMasteryList.sort((a, b) => a.mastery - b.mastery);
+                    
+                    const el = createMasteryElement(subject, subjectMastery, topicsInSubject.length, topicMasteryList);
+                    masteryList.appendChild(el);
+                });
+            }
+
+            // Render other sections
             allTopics.forEach((topic, topicIndex) => {
-                const topicEl = createTopicElement(topic, topicIndex);
-                allTopicsList.appendChild(topicEl);
+                if (topic.isPastPaperLog) return; 
                 
                 if (topic.calendarEvents) {
                     topic.calendarEvents.forEach((event, eventIndex) => {
@@ -504,7 +794,7 @@
                         dueDate.setDate(dateAdded.getDate() + event.dayOffset);
 
                         if (event.isComplete) {
-                            completedEvents.push({ topic, event, dueDate });
+                            // Completed events are now in renderDataView
                         } else if (dueDate.getTime() === today.getTime()) {
                             const dueEl = createDueItemElement(topic, event, topicIndex, eventIndex, dueDate, false);
                             dueTodayList.appendChild(dueEl);
@@ -526,12 +816,6 @@
                 upcomingList.appendChild(upcomingEl);
             });
             
-            completedEvents.sort((a, b) => new Date(b.event.completedDate) - new Date(a.event.completedDate));
-            completedEvents.forEach(item => {
-                const logEl = createLogbookItemElement(item.topic, item.event);
-                logbookList.appendChild(logEl);
-            });
-            
             examPlans.forEach(plan => {
                 const planEl = createExamPlanElement(plan);
                 examPlanList.appendChild(planEl);
@@ -539,9 +823,44 @@
 
             dueEmptyState.style.display = dueCount === 0 ? 'block' : 'none';
             upcomingEmptyState.style.display = upcomingEvents.length === 0 ? 'block' : 'none';
-            logbookEmptyState.style.display = completedEvents.length === 0 ? 'block' : 'none';
-            allTopicsEmptyState.style.display = allTopics.length === 0 ? 'block' : 'none';
             examPlanEmptyState.style.display = examPlans.length === 0 ? 'block' : 'none';
+        }
+        
+        function renderDataView() {
+            getTopics();
+            logbookList.innerHTML = '';
+            allTopicsList.innerHTML = '';
+            
+            let completedEvents = [];
+            
+            allTopics.forEach((topic, topicIndex) => {
+                // --- FIX: Only add REAL topics to the "All Topics" list ---
+                if (!topic.isPastPaperLog) {
+                    // Find the "real" index in the main allTopics array
+                    const realIndex = allTopics.findIndex(t => t.id === topic.id);
+                    const topicEl = createTopicElement(topic, realIndex); // Use realIndex
+                    allTopicsList.appendChild(topicEl);
+                }
+                
+                // Collect completed events for Logbook (inc. past papers)
+                if (topic.calendarEvents) {
+                    topic.calendarEvents.forEach(event => {
+                        if (event.isComplete) {
+                            completedEvents.push({ topic, event });
+                        }
+                    });
+                }
+            });
+
+            // Render Logbook
+            completedEvents.sort((a, b) => new Date(b.event.completedDate) - new Date(a.event.completedDate));
+            completedEvents.forEach(item => {
+                const logEl = createLogbookItemElement(item.topic, item.event);
+                logbookList.appendChild(logEl);
+            });
+            
+            logbookEmptyState.style.display = completedEvents.length === 0 ? 'block' : 'none';
+            allTopicsEmptyState.style.display = allTopics.filter(t => !t.isPastPaperLog).length === 0 ? 'block' : 'none';
         }
 
         function createDueItemElement(topic, event, topicIndex, eventIndex, dueDate, isOverdue) {
@@ -593,13 +912,56 @@
         function createLogbookItemElement(topic, event) {
             const el = document.createElement('div');
             el.className = "p-3 bg-white dark:bg-gray-800 border-l-4 border-green-500 rounded-r-lg opacity-70";
+            
+            let title = topic.topicName;
+            // Differentiate between a review and a past paper log
+            if (topic.isPastPaperLog) {
+                title = topic.topicName; // The name is already "Logged Paper: ..."
+            }
+            
             el.innerHTML = `
                 <div>
                     <p class="font-semibold text-gray-600 dark:text-gray-300">Completed: ${new Date(event.completedDate).toLocaleDateString()}</p>
-                    <p class="font-medium text-gray-900 dark:text-gray-100">${topic.topicName}</p>
-                    <p class="text-sm text-gray-500 dark:text-gray-400">${event.taskTitle}</p>
+                    <p class="font-medium text-gray-900 dark:text-gray-100">${title}</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">${event.taskDescription}</p>
                 </div>
             `;
+            return el;
+        }
+
+        function createMasteryElement(subject, percentage, topicCount, topicList) {
+            const el = document.createElement('div');
+            el.className = "bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden";
+            
+            let topicDetailsHTML = topicList.map(topic => `
+                <div class="flex justify-between items-center py-2 px-4 border-t border-gray-100 dark:border-gray-700">
+                    <span class="text-sm text-gray-700 dark:text-gray-300">${topic.chapter}.${topic.subChapter} - ${topic.name}</span>
+                    <span class="text-sm font-medium ${topic.mastery < 30 ? 'text-red-500' : (topic.mastery < 70 ? 'text-yellow-500' : 'text-green-500')}">${topic.mastery.toFixed(0)}%</span>
+                </div>
+            `).join('');
+            
+            el.innerHTML = `
+                <div class="p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700" data-subject="${subject}">
+                    <div class="flex justify-between items-baseline mb-1">
+                        <h3 class="font-semibold text-lg text-gray-900 dark:text-gray-100">${subject}</h3>
+                        <span class="text-sm font-medium text-indigo-600 dark:text-indigo-400">${percentage.toFixed(0)}%</span>
+                    </div>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">${topicCount} ${topicCount === 1 ? 'topic' : 'topics'}</p>
+                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                        <div class="bg-indigo-600 h-2.5 rounded-full" style="width: ${percentage}%"></div>
+                    </div>
+                </div>
+                <div class="mastery-details" id="mastery-details-${subject}">
+                    <h4 class="font-semibold text-xs text-gray-500 dark:text-gray-400 px-4 py-2 bg-gray-50 dark:bg-gray-700 border-t border-gray-100 dark:border-gray-700">TOPICS (WEAKEST FIRST)</h4>
+                    ${topicDetailsHTML}
+                </div>
+            `;
+            
+            el.querySelector('[data-subject]').addEventListener('click', (e) => {
+                const subject = e.currentTarget.dataset.subject;
+                document.getElementById(`mastery-details-${subject}`).classList.toggle('expanded');
+            });
+            
             return el;
         }
         
@@ -607,45 +969,12 @@
             const el = document.createElement('div');
             el.className = "p-4 bg-white dark:bg-gray-800 border border-indigo-500 rounded-lg shadow-md";
             
-            let completedCount = 0;
-            let totalEvents = 0;
-            
-            plan.topicIds.forEach(topicId => {
-                const topic = allTopics.find(t => t.id === topicId);
-                if (topic) {
-                    topic.calendarEvents.forEach(event => {
-                        // Only count events that are part of this plan
-                        if (plan.topicIds.includes(topic.id)) {
-                             totalEvents++;
-                             if (event.isComplete) {
-                                 completedCount++;
-                             }
-                        }
-                    });
-                }
-            });
-            // This logic is simplified: it counts *all* events. A better logic would tag events by plan.
-            // For now, let's count *uncompleted* events for topics in the plan
-            totalEvents = 0;
-            completedCount = 0;
-            plan.topicIds.forEach(topicId => {
-                 const topic = allTopics.find(t => t.id === topicId);
-                 if (topic) {
-                    let topicComplete = true;
-                    topic.calendarEvents.forEach(event => {
-                        totalEvents++; // This is still not quite right.
-                        if(event.isComplete) completedCount++;
-                        if(!event.isComplete) topicComplete = false;
-                    });
-                 }
-            });
-            // Let's refine. An exam plan is a "snapshot" of topics.
-            // Let's count how many topics in the plan are fully reviewed.
             let topicsCompleted = 0;
+            const totalTopics = plan.topicIds.length;
+
             plan.topicIds.forEach(topicId => {
                 const topic = allTopics.find(t => t.id === topicId);
                 if (topic) {
-                    // Is the *last* event for this topic complete?
                     const lastEvent = topic.calendarEvents[topic.calendarEvents.length - 1];
                     if (lastEvent.isComplete) {
                         topicsCompleted++;
@@ -653,9 +982,8 @@
                 }
             });
 
-            const totalTopics = plan.topicIds.length;
             const progress = (totalTopics > 0) ? (topicsCompleted / totalTopics) * 100 : 0;
-            const examDate = new Date(plan.examDate + 'T00:00:00'); // Fix timezone issue
+            const examDate = new Date(plan.examDate + 'T00:00:00');
             
             el.innerHTML = `
                 <div class="flex justify-between items-center mb-2">
@@ -688,26 +1016,42 @@
         function createTopicElement(topic, index) {
             const el = document.createElement('div');
             el.className = "p-4 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg shadow-sm flex justify-between items-center";
+            
             el.innerHTML = `
                 <div>
                     <p class="font-semibold text-gray-900 dark:text-gray-100">${topic.topicName}</p>
-                    <p class="text-sm text-gray-500 dark:text-gray-400">${topic.subject} / ${topic.chapter}.${topic.subChapter} (Added: ${new Date(topic.dateAdded).toLocaleDateString()})</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">${topic.subject} / ${topic.chapter}.${topic.subChapter}</p>
                 </div>
-                <button data-index="${index}" class="delete-topic-btn ml-4 flex-shrink-0 bg-red-500 hover:bg-red-600 text-white text-xs font-bold py-1 px-2 rounded-md">
-                    Delete
-                </button>
+                <div class="flex space-x-2">
+                    <button data-index="${index}" class="edit-topic-btn ml-4 flex-shrink-0 bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold py-1 px-2 rounded-md">
+                        Edit
+                    </button>
+                    <button data-index="${index}" class="delete-topic-btn ml-4 flex-shrink-0 bg-red-500 hover:bg-red-600 text-white text-xs font-bold py-1 px-2 rounded-md">
+                        Delete
+                    </button>
+                </div>
             `;
+            
+            el.querySelector('.edit-topic-btn').addEventListener('click', (e) => {
+                const topicIndex = e.currentTarget.dataset.index;
+                const topic = allTopics[topicIndex]; // Use the "real" index
+                currentEditTopicId = topic.id; // Set the ID for the editor
+                showView('editor');
+            });
+            
             el.querySelector('.delete-topic-btn').addEventListener('click', (e) => {
-                if (confirm(`Are you sure you want to delete "${topic.topicName}"? This will not delete the topic or its history.`)) {
-                    allTopics.splice(e.currentTarget.dataset.index, 1);
+                const topicIndex = e.currentTarget.dataset.index;
+                const topic = allTopics[topicIndex]; // Use the "real" index
+                if (confirm(`Are you sure you want to delete "${topic.topicName}"? This will delete the topic and all its history.`)) {
+                    allTopics.splice(topicIndex, 1); // Splice from the real array
                     saveTopics();
-                    renderMainView();
+                    renderDataView(); // Rerender data view
                 }
             });
             return el;
         }
 
-        function handleAddTopic(e) {
+        function handleAddTopicJSON(e) {
             e.preventDefault();
             addErrorMessage.classList.add('hidden');
             const jsonString = jsonInput.value.trim();
@@ -722,6 +1066,15 @@
                 const data = JSON.parse(jsonString);
                 if (!data.calendarEvents || !data.ankiCards || !data.subject || !data.chapter || !data.subChapter || !data.topicName) {
                     throw new Error("Invalid JSON. Missing required fields (subject, chapter, subChapter, topicName, etc.).");
+                }
+                
+                // *** BUG FIX: Check for duplicates before adding ***
+                getTopics();
+                const key = `${data.subject}-${data.chapter}-${data.subChapter}`;
+                const existing = allTopics.find(t => `${t.subject}-${t.chapter}-${t.subChapter}` === key);
+                
+                if (existing) {
+                    throw new Error(`Topic "${data.topicName}" (${key}) already exists.`);
                 }
                 
                 data.calendarEvents.forEach(event => {
@@ -746,8 +1099,7 @@
                 saveTopics();
                 
                 jsonInput.value = '';
-                renderMainView();
-                showView('main');
+                showView('data'); // Go back to data view
 
             } catch (err) {
                 console.error(err);
@@ -782,8 +1134,8 @@
             
             const currentRepLevel = event.repLevel || 0;
             const hardDays = repIntervals[0];
-            const goodDays = repIntervals[Math.min(currentRepLevel + 1, repIntervals.length - 1)];
-            const easyDays = repIntervals[Math.min(currentRepLevel + 2, repIntervals.length - 1)];
+            const goodDays = repIntervals[Math.min(currentRepLevel + 1, maxRepLevel)];
+            const easyDays = repIntervals[Math.min(currentRepLevel + 2, maxRepLevel)];
 
             document.querySelector('.review-complete-btn[data-level="hard"] span').textContent = `(Review in ${hardDays} day)`;
             document.querySelector('.review-complete-btn[data-level="good"] span').textContent = `(Review in ${goodDays} days)`;
@@ -896,9 +1248,9 @@
             if (level === 'hard') {
                 newRepLevel = 0;
             } else if (level === 'good') {
-                newRepLevel = Math.min(currentRepLevel + 1, repIntervals.length - 1);
+                newRepLevel = Math.min(currentRepLevel + 1, maxRepLevel);
             } else { // easy
-                newRepLevel = Math.min(currentRepLevel + 2, repIntervals.length - 1);
+                newRepLevel = Math.min(currentRepLevel + 2, maxRepLevel);
             }
             
             const nextReviewInDays = repIntervals[newRepLevel];
@@ -928,7 +1280,7 @@
             getExamPlans();
             examErrorMessage.classList.add('hidden');
             
-            const subjects = [...new Set(allTopics.map(t => t.subject))];
+            const subjects = [...new Set(allTopics.filter(t => !t.isPastPaperLog).map(t => t.subject))];
             examSubjectFilter.innerHTML = '<option value="all">Show All Subjects</option>';
             subjects.sort().forEach(subject => {
                 const option = document.createElement('option');
@@ -939,14 +1291,13 @@
             
             renderExamTopicList('all');
             
-            // Render active exam plans
             activeExamPlanList.innerHTML = '';
             if (examPlans.length === 0) {
                 activeExamPlanEmptyState.style.display = 'block';
             } else {
                 activeExamPlanEmptyState.style.display = 'none';
                 examPlans.forEach(plan => {
-                    const planEl = createExamPlanElement(plan); // Use the same element from main view
+                    const planEl = createExamPlanElement(plan);
                     activeExamPlanList.appendChild(planEl);
                 });
             }
@@ -955,7 +1306,7 @@
         function renderExamTopicList(selectedSubject) {
             examTopicList.innerHTML = '';
             
-            const filteredTopics = allTopics.filter(t => selectedSubject === 'all' || t.subject === selectedSubject);
+            const filteredTopics = allTopics.filter(t => (selectedSubject === 'all' || t.subject === selectedSubject) && !t.isPastPaperLog);
             
             if (filteredTopics.length === 0) {
                 examTopicList.innerHTML = '<p class="text-gray-500 dark:text-gray-400">No topics found for this subject.</p>';
@@ -1000,7 +1351,6 @@
                 examTopicList.appendChild(chapterDiv);
             });
             
-            // Add event listeners
             examTopicList.querySelectorAll('.exam-chapter-toggle').forEach(parent => {
                 parent.addEventListener('change', (e) => {
                     const chapter = e.currentTarget.dataset.chapter;
@@ -1119,6 +1469,7 @@
             URL.revokeObjectURL(url);
         }
         
+        // --- *** THIS IS THE NEW MERGE FUNCTION *** ---
         function handleImport(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -1127,21 +1478,373 @@
             reader.onload = (event) => {
                 try {
                     const parsedData = JSON.parse(event.target.result);
-                    if (parsedData.topics && parsedData.plans) {
-                        localStorage.setItem('studyTopics', JSON.stringify(parsedData.topics));
-                        localStorage.setItem('studyExamPlans', JSON.stringify(parsedData.plans));
-                        renderMainView(); // Refresh the entire UI
-                    } else {
-                        alert("Error: Invalid backup file format.");
+                    if (!parsedData.topics || !parsedData.plans) {
+                         throw new Error("Invalid backup file format. Missing 'topics' or 'plans'.");
                     }
+                    
+                    // Get current data from localStorage
+                    getTopics();
+                    getExamPlans();
+                    
+                    const newTopics = parsedData.topics || [];
+                    const newPlans = parsedData.plans || [];
+                    
+                    // Create a Set of existing keys for duplicate checking
+                    // A key is "Subject-Chapter-SubChapter"
+                    const existingTopicKeys = new Set(allTopics.map(t => `${t.subject}-${t.chapter}-${t.subChapter}`));
+                    let topicsAdded = 0;
+                    
+                    newTopics.forEach(newTopic => {
+                        // Use a unique key to prevent duplicates
+                        const key = `${newTopic.subject}-${newTopic.chapter}-${newTopic.subChapter}`;
+                        if (!existingTopicKeys.has(key)) {
+                            allTopics.push(newTopic);
+                            topicsAdded++;
+                        }
+                    });
+                    
+                    const existingPlanIds = new Set(examPlans.map(p => p.id));
+                    let plansAdded = 0;
+                    
+                    newPlans.forEach(newPlan => {
+                        if (!existingPlanIds.has(newPlan.id)) {
+                            examPlans.push(newPlan);
+                            plansAdded++;
+                        }
+                    });
+
+                    // Save the merged data back to localStorage
+                    saveTopics();
+                    saveExamPlans();
+                    
+                    alert(`Import successful!\n- ${topicsAdded} new topics added.\n- ${plansAdded} new exam plans added.\n\n(Existing items were skipped.)`);
+                    
+                    renderMainView(); // Refresh the entire UI
+                    renderDataView(); // Refresh data view as well
+                    
                 } catch (err) {
                     console.error("Import error:", err);
-                    alert("Error: Could not read or parse the file.");
+                    alert("Error: " + err.message);
                 }
                 // Reset file input
                 e.target.value = null;
             };
             reader.readAsText(file);
+        }
+        // --- *** END OF NEW MERGE FUNCTION *** ---
+        
+        // --- *** NEW HARD RESET FUNCTION *** ---
+        function handleHardReset() {
+            // Clear all data from localStorage
+            localStorage.removeItem('studyTopics');
+            localStorage.removeItem('studyExamPlans');
+            // Optionally, clear theme preference too
+            // localStorage.removeItem('theme'); 
+            
+            // Reload the page
+            location.reload();
+        }
+
+        // --- Editor Logic ---
+        function renderEditorView() {
+            editorForm.reset();
+            editorCardList.innerHTML = '';
+            editorQList.innerHTML = '';
+            editorNoCards.style.display = 'block';
+            editorNoQs.style.display = 'block';
+            editorErrorMessage.classList.add('hidden');
+            
+            getTopics();
+            const subjects = [...new Set(allTopics.map(t => t.subject))];
+            subjectDataList.innerHTML = '';
+            subjects.forEach(s => {
+                const option = document.createElement('option');
+                option.value = s;
+                subjectDataList.appendChild(option);
+            });
+            
+            if (currentEditTopicId) {
+                editorViewTitle.textContent = "Edit Topic";
+                editorSaveBtn.textContent = "Save Changes";
+                editorFirstReview.style.display = 'none'; // Hide first review section when editing
+                
+                const topic = allTopics.find(t => t.id === currentEditTopicId);
+                if (!topic) return;
+                
+                document.getElementById('editor-subject').value = topic.subject;
+                document.getElementById('editor-topic-name').value = topic.topicName;
+                document.getElementById('editor-chapter').value = topic.chapter;
+                document.getElementById('editor-subchapter').value = topic.subChapter;
+                
+                if (topic.ankiCards.length > 0) {
+                    editorNoCards.style.display = 'none';
+                    topic.ankiCards.forEach(card => addCardField(card.front, card.back));
+                }
+                
+                if (topic.practiceQuestions.length > 0) {
+                    editorNoQs.style.display = 'none';
+                    topic.practiceQuestions.forEach(q => addQuestionField(q.question, q.answer));
+                }
+                
+            } else {
+                editorViewTitle.textContent = "Create Topic";
+                editorSaveBtn.textContent = "Save New Topic";
+                editorFirstReview.style.display = 'block'; // Show first review when creating
+            }
+        }
+        
+        function addCardField(front = '', back = '') {
+            editorNoCards.style.display = 'none';
+            const cardId = Date.now() + Math.random(); // Add random to prevent collision
+            const el = document.createElement('div');
+            el.className = "p-4 border dark:border-gray-600 rounded-md relative";
+            el.id = `card-${cardId}`;
+            el.innerHTML = `
+                <button type="button" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full h-6 w-6 flex items-center justify-center text-xs" onclick="document.getElementById('${el.id}').remove()">&times;</button>
+                <textarea class="editor-card-front w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white" rows="2" placeholder="Front of card" required>${front}</textarea>
+                <textarea class="editor-card-back w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white mt-2" rows="2" placeholder="Back of card" required>${back}</textarea>
+            `;
+            editorCardList.appendChild(el);
+        }
+        
+        function addQuestionField(question = '', answer = '') {
+            editorNoQs.style.display = 'none';
+            const qId = Date.now() + Math.random(); // Add random to prevent collision
+            const el = document.createElement('div');
+            el.className = "p-4 border dark:border-gray-600 rounded-md relative";
+            el.id = `q-${qId}`;
+            el.innerHTML = `
+                <button type="button" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full h-6 w-6 flex items-center justify-center text-xs" onclick="document.getElementById('${el.id}').remove()">&times;</button>
+                <textarea class="editor-q-question w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white" rows="2" placeholder="Question" required>${question}</textarea>
+                <textarea class="editor-q-answer w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white mt-2" rows="3" placeholder="Answer" required>${answer}</textarea>
+            `;
+            editorQList.appendChild(el);
+        }
+        
+        function handleSaveManualTopic(e) {
+            e.preventDefault();
+            editorErrorMessage.classList.add('hidden');
+            
+            // 1. Get Metadata
+            const subject = document.getElementById('editor-subject').value.trim();
+            const topicName = document.getElementById('editor-topic-name').value.trim();
+            const chapter = document.getElementById('editor-chapter').value.trim();
+            const subChapter = document.getElementById('editor-subchapter').value.trim();
+            
+            // 3. Get Flashcards
+            const ankiCards = [];
+            const cardElements = editorCardList.querySelectorAll('.editor-card-front');
+            cardElements.forEach(frontEl => {
+                const front = frontEl.value.trim();
+                const back = frontEl.nextElementSibling.value.trim();
+                if (front && back) {
+                    ankiCards.push({ front, back });
+                }
+            });
+            
+            // 4. Get Practice Questions
+            const practiceQuestions = [];
+            const qElements = editorQList.querySelectorAll('.editor-q-question');
+            qElements.forEach(qEl => {
+                const question = qEl.value.trim();
+                const answer = qEl.nextElementSibling.value.trim();
+                if (question && answer) {
+                    practiceQuestions.push({ question, answer });
+                }
+            });
+            
+            if (currentEditTopicId) {
+                // --- UPDATE EXISTING TOPIC ---
+                const topicIndex = allTopics.findIndex(t => t.id === currentEditTopicId);
+                if (topicIndex === -1) return;
+                
+                const topic = allTopics[topicIndex];
+                topic.subject = subject;
+                topic.topicName = topicName;
+                topic.chapter = chapter;
+                topic.subChapter = subChapter;
+                topic.ankiCards = ankiCards;
+                topic.practiceQuestions = practiceQuestions;
+                
+                allTopics[topicIndex] = topic;
+                
+            } else {
+                // --- CREATE NEW TOPIC ---
+                const taskTitle = document.getElementById('editor-task-title').value.trim();
+                const taskDesc = document.getElementById('editor-task-desc').value.trim();
+                
+                if (!subject || !topicName || !chapter || !subChapter || !taskTitle) {
+                    editorErrorMessage.textContent = "Please fill out all required fields in the 'Topic Details' and 'First Review' sections.";
+                    editorErrorMessage.classList.remove('hidden');
+                    return;
+                }
+                
+                // Check for duplicates
+                getTopics();
+                const key = `${subject}-${chapter}-${subChapter}`;
+                const existing = allTopics.find(t => `${t.subject}-${t.chapter}-${t.subChapter}` === key);
+                
+                if (existing) {
+                    editorErrorMessage.textContent = `A topic with this key (${key}) already exists. Please use the 'Edit' button on the Data Management page.`;
+                    editorErrorMessage.classList.remove('hidden');
+                    return;
+                }
+
+                const newTopic = {
+                    id: Date.now(),
+                    dateAdded: new Date().toISOString(),
+                    subject: subject,
+                    chapter: chapter,
+                    subChapter: subChapter,
+                    topicName: topicName,
+                    calendarEvents: [
+                        {
+                            dayOffset: 0, // New topics are due today
+                            taskTitle: taskTitle,
+                            taskDescription: taskDesc,
+                            isComplete: false,
+                            completedDate: null,
+                            repLevel: 0
+                        }
+                    ],
+                    ankiCards: ankiCards,
+                    practiceQuestions: practiceQuestions
+                };
+                allTopics.push(newTopic);
+            }
+            
+            // 6. Save and Finish
+            saveTopics();
+            currentEditTopicId = null; // Clear edit ID
+            renderDataView();
+            showView('data');
+        }
+        
+        // --- Past Paper Log Logic ---
+        function renderLogPaperView() {
+            getTopics();
+            logPaperError.classList.add('hidden');
+            logPaperName.value = '';
+            
+            const subjects = [...new Set(allTopics.filter(t => !t.isPastPaperLog).map(t => t.subject))];
+            logPaperSubject.innerHTML = '<option value="all" selected disabled>Select a subject...</option>';
+            subjects.sort().forEach(subject => {
+                const option = document.createElement('option');
+                option.value = subject;
+                option.textContent = subject;
+                logPaperSubject.appendChild(option);
+            });
+            
+            renderLogPaperTopicList('all');
+        }
+        
+        function renderLogPaperTopicList(selectedSubject) {
+            logPaperTopicList.innerHTML = '';
+            
+            const filteredTopics = allTopics.filter(t => (selectedSubject === 'all' || t.subject === selectedSubject) && !t.isPastPaperLog);
+            
+            if (filteredTopics.length === 0) {
+                logPaperTopicList.innerHTML = '<p class="text-gray-500 dark:text-gray-400">No topics found. Add topics or select a subject.</p>';
+                return;
+            }
+            
+            const topicsByChapter = filteredTopics.reduce((acc, topic) => {
+                const chapter = topic.chapter || 'N/A';
+                if (!acc[chapter]) {
+                    acc[chapter] = [];
+                }
+                acc[chapter].push(topic);
+                return acc;
+            }, {});
+            
+            Object.keys(topicsByChapter).sort((a, b) => a - b).forEach(chapterNum => {
+                const chapterDiv = document.createElement('div');
+                chapterDiv.className = "mb-3";
+                
+                const chapterTitle = document.createElement('h4');
+                chapterTitle.className = "font-semibold text-gray-900 dark:text-gray-100 mb-2 border-b dark:border-gray-600 pb-1";
+                chapterTitle.textContent = `Chapter ${chapterNum}`;
+                chapterDiv.appendChild(chapterTitle);
+                
+                const childDiv = document.createElement('div');
+                childDiv.className = "ml-6 space-y-1 mt-1";
+                
+                topicsByChapter[chapterNum].sort((a, b) => a.subChapter - b.subChapter).forEach(topic => {
+                    const childLabel = document.createElement('label');
+                    childLabel.className = "flex items-center space-x-3 p-1 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer";
+                    childLabel.innerHTML = `
+                        <input type="checkbox" data-topic-id="${topic.id}" class="log-paper-topic-check rounded border-gray-300 dark:border-gray-600 dark:bg-gray-900 text-indigo-600 focus:ring-indigo-500">
+                        <span>${topic.subChapter}. ${topic.topicName}</span>
+                    `;
+                    childDiv.appendChild(childLabel);
+                });
+                
+                chapterDiv.appendChild(childDiv);
+                logPaperTopicList.appendChild(chapterDiv);
+            });
+        }
+        
+        function handleLogPaper() {
+            logPaperError.classList.add('hidden');
+            const paperName = logPaperName.value.trim();
+            const checkedBoxes = document.querySelectorAll('.log-paper-topic-check:checked');
+            
+            if (!paperName) {
+                logPaperError.textContent = "Please enter a name for the paper.";
+                logPaperError.classList.remove('hidden');
+                return;
+            }
+            if (checkedBoxes.length === 0) {
+                logPaperError.textContent = "Please select at least one weak topic.";
+                logPaperError.classList.remove('hidden');
+                return;
+            }
+            
+            let weakTopics = [];
+            
+            checkedBoxes.forEach(box => {
+                const topicId = parseInt(box.dataset.topicId);
+                const topic = allTopics.find(t => t.id === topicId);
+                if (!topic) return;
+                
+                weakTopics.push(topic.topicName);
+                
+                let eventToReset = topic.calendarEvents.find(e => !e.isComplete) || topic.calendarEvents[topic.calendarEvents.length - 1];
+                
+                if (eventToReset) {
+                    eventToReset.isComplete = false;
+                    eventToReset.repLevel = 0; // Reset to 1-day
+                    const dateAdded = getNormalizedDate(topic.dateAdded);
+                    const daysSinceAdded = Math.round((today.getTime() - dateAdded.getTime()) / (1000 * 60 * 60 * 24));
+                    eventToReset.dayOffset = daysSinceAdded + 1; // Reschedule for tomorrow
+                }
+            });
+            
+            // Create a "log" entry
+            const logEntry = {
+                id: Date.now(),
+                dateAdded: new Date().toISOString(),
+                subject: logPaperSubject.value,
+                chapter: "N/A",
+                subChapter: "N/A",
+                topicName: `Logged Paper: ${paperName}`,
+                isPastPaperLog: true, // Special flag
+                calendarEvents: [{
+                    dayOffset: 0,
+                    taskTitle: `Logged Paper: ${paperName}`,
+                    taskDescription: `Tagged ${weakTopics.length} weak topics: ${weakTopics.join(', ')}`,
+                    isComplete: true,
+                    completedDate: new Date().toISOString(),
+                    repLevel: 0
+                }],
+                ankiCards: [],
+                practiceQuestions: []
+            };
+            allTopics.push(logEntry);
+            
+            saveTopics();
+            renderMainView();
+            showView('main');
         }
 
         // --- Start the App ---
